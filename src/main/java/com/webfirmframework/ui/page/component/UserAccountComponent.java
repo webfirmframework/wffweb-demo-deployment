@@ -52,7 +52,7 @@ public class UserAccountComponent extends Div {
                     //This works well on multi node mode
                     documentModel.browserPage().getTagRepository()
                             .executeJsInOtherBrowserPages(
-                                    "window.setURI('%s');".formatted(NavigationURI.LOGIN.getUri(documentModel)));
+                                    "wffAsync.setURI('%s');".formatted(NavigationURI.LOGIN.getUri(documentModel)));
 
                     //navigate to login page
                     documentModel.browserPage().setURI(NavigationURI.LOGIN.getUri(documentModel));
@@ -66,7 +66,6 @@ public class UserAccountComponent extends Div {
 
 
         final String realtimeLogURI = NavigationURI.REALTIME_SERVER_LOG.getUri(documentModel);
-        //navigation using server side setURI method
         new A(this,
                 Bootstrap5CssClass.LINK_PRIMARY.getAttribute(),
                 new Href(realtimeLogURI),
@@ -81,38 +80,39 @@ public class UserAccountComponent extends Div {
         new A(this,
                 Bootstrap5CssClass.BTN_PRIMARY.getAttribute(),
                 new Href(itemsURI),
-                new OnClick("event.preventDefault(); window.setURI('" + itemsURI + "');"))
+                new OnClick("event.preventDefault(); wffAsync.setURI('" + itemsURI + "');"))
                 .give(TagContent::text, "View Items");
 
         new Br(this);
         new Br(this);
 
+        //navigation using client side setURI method
         new A(this,
                 Bootstrap5CssClass.BTN_PRIMARY.getAttribute(),
                 new Href(itemsURI),
-                new OnClick("event.preventDefault(); window.setURI('" + itemsURI + "', null, null, true);"))
+                new OnClick("event.preventDefault(); wffAsync.setURI('" + itemsURI + "', null, null, true);"))
                 .give(TagContent::text, "View Items with replace true");
 
         new Br(this);
         new Br(this);
 
         final String viewItemURI = NavigationURI.VIEW_ITEM.getUri(documentModel) + "?itemId=55555";
-        //navigation using server side setURI method
+        //navigation using client side setURI method
         new A(this,
                 Bootstrap5CssClass.BTN_PRIMARY.getAttribute(),
                 new Href(itemsURI),
-                new OnClick("event.preventDefault(); window.setURI('" + viewItemURI + "');"))
+                new OnClick("event.preventDefault(); wffAsync.setURI('" + viewItemURI + "');"))
                 .give(TagContent::text, "View Item 55555 by query string param");
 
         new Br(this);
         new Br(this);
 
         final String viewItemURI2 = NavigationURI.VIEW_ITEM.getUri(documentModel) + "?itemId=14";
-        //navigation using server side setURI method
+        //navigation using client side setURI method
         new A(this,
                 Bootstrap5CssClass.BTN_PRIMARY.getAttribute(),
                 new Href(itemsURI),
-                new OnClick("event.preventDefault(); window.setURI('" + viewItemURI2 + "');"))
+                new OnClick("event.preventDefault(); wffAsync.setURI('" + viewItemURI2 + "');"))
                 .give(TagContent::text, "View Item 14 by query string param");
 
         new Br(this);
@@ -120,22 +120,22 @@ public class UserAccountComponent extends Div {
 
 
         final String viewItemURI3 = NavigationURI.VIEW_ITEM.getUri(documentModel) + "?itemId=14#hash1";
-        //navigation using server side setURI method
+        //navigation using client side setURI method
         new A(this,
                 Bootstrap5CssClass.BTN_PRIMARY.getAttribute(),
                 new Href(viewItemURI3),
-                new OnClick("event.preventDefault(); window.setURI('" + viewItemURI3 + "');"))
+                new OnClick("event.preventDefault(); wffAsync.setURI('" + viewItemURI3 + "');"))
                 .give(TagContent::text, "View Item 14 by query string param hash1");
 
         new Br(this);
         new Br(this);
 
         final String viewItemURI4 = NavigationURI.VIEW_ITEM.getUri(documentModel) + "?itemId=14#hash2";
-        //navigation using server side setURI method
+        //navigation using client side setURI method
         new A(this,
                 Bootstrap5CssClass.BTN_PRIMARY.getAttribute(),
                 new Href(viewItemURI4),
-                new OnClick("event.preventDefault(); window.setURI('" + viewItemURI4 + "');"))
+                new OnClick("event.preventDefault(); wffAsync.setURI('" + viewItemURI4 + "');"))
                 .give(TagContent::text, "View Item 14 by query string param hash2");
 
         new Br(this);
@@ -160,6 +160,7 @@ public class UserAccountComponent extends Div {
         new Br(this);
         new Br(this);
 
+        //navigation using server side setURI method
         new A(this,
                 Bootstrap5CssClass.BTN_PRIMARY.getAttribute(),
                 new Href(addItemURI),
@@ -334,7 +335,7 @@ public class UserAccountComponent extends Div {
         new Br(this);
         new A(this,
                 new Href(sampleTemplate1URI),
-                new OnClick("event.preventDefault(); window.setURI('" + sampleTemplate1URI + "', function(){loadingIcon.hidden = false;});"),
+                new OnClick("event.preventDefault(); wffAsync.setURI('" + sampleTemplate1URI + "', function(){loadingIcon.hidden = false;});"),
                 Bootstrap5CssClass.BTN_INFO_SM.getAttribute()).give(TagContent::text, "SampleTemplate1");
 
 
@@ -344,7 +345,7 @@ public class UserAccountComponent extends Div {
 
         new A(this,
                 new Href(sampleTemplate2URI),
-                new OnClick("event.preventDefault(); window.setURI('" + sampleTemplate2URI + "', function(){loadingIcon.hidden = false;});"),
+                new OnClick("event.preventDefault(); wffAsync.setURI('" + sampleTemplate2URI + "', function(){loadingIcon.hidden = false;});"),
                 Bootstrap5CssClass.BTN_INFO_SM.getAttribute()).give(TagContent::text, "SampleTemplate2");
 
     }
