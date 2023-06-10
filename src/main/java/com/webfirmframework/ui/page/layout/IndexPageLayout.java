@@ -15,6 +15,7 @@ import com.webfirmframework.wffweb.tag.html.attribute.global.ClassAttribute;
 import com.webfirmframework.wffweb.tag.html.attribute.global.Id;
 import com.webfirmframework.wffweb.tag.html.attributewff.CustomAttribute;
 import com.webfirmframework.wffweb.tag.html.html5.attribute.Content;
+import com.webfirmframework.wffweb.tag.html.html5.attribute.global.DataAttribute;
 import com.webfirmframework.wffweb.tag.html.html5.attribute.global.Hidden;
 import com.webfirmframework.wffweb.tag.html.links.Link;
 import com.webfirmframework.wffweb.tag.html.metainfo.Head;
@@ -40,7 +41,7 @@ public class IndexPageLayout extends Html {
     private Div mainDiv;
 
     public IndexPageLayout(BrowserPage browserPage, BrowserPageSession session, String contextPath) {
-        super(null);
+        super(null, new DataAttribute("bs-theme", "dark"));
         super.setPrependDocType(true);
         this.documentModel = new DocumentModel(session, browserPage, contextPath);
         super.setSharedData(documentModel);
@@ -61,9 +62,9 @@ public class IndexPageLayout extends Html {
                     new Content("width=device-width, initial-scale=1"));
 
             new Link(head,
-                    new Href("https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"),
-                    new Rel("stylesheet"),
-                    new CustomAttribute("integrity", "sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"),
+                    new Href("https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"),
+                    new Rel(Rel.STYLESHEET),
+                    new CustomAttribute("integrity", "sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"),
                     new CustomAttribute("crossorigin", "anonymous"));
 
             new Script(head,
@@ -92,8 +93,8 @@ public class IndexPageLayout extends Html {
             });
 
             new Script(body,
-                    new Src("https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"),
-                    new CustomAttribute("integrity", "sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"),
+                    new Src("https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"),
+                    new CustomAttribute("integrity", "sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"),
                     new CustomAttribute("crossorigin", "anonymous"));
 
         });
