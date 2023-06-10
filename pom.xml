@@ -14,7 +14,7 @@
 		<java.version>17</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<tomcat.version>10.1.7</tomcat.version>
+		<tomcat.version>10.1.9</tomcat.version>
 	</properties>
 
 	<repositories>
@@ -64,7 +64,7 @@
 		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
-			<version>4.3.0</version>
+			<version>4.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
