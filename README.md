@@ -26,7 +26,7 @@ The only thing you have to do is to deploy this app in multiple server nodes and
 
 _(use your own domain names)_
 
-**Eg**: _deploy this wffweb demo app in multiple domain nodes like node1.webfirmframework.com, node2.webfirmframework.com, node2.webfirmframework.com etc... 
+**Eg**: _deploy this wffweb demo app in multiple domain nodes like node1.webfirmframework.com, node2.webfirmframework.com, node3.webfirmframework.com etc... 
 Now create a load balancer in the main domain webfirmframework.com and point it to those subdomain nodes. That's all!_
 
 **NB**: _The websocket connection should be publicly accessible in the subdomain nodes. 
