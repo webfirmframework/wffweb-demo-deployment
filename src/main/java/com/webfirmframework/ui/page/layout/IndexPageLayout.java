@@ -128,7 +128,7 @@ public class IndexPageLayout extends Html {
                 () -> {
                     documentModel.browserPage().getTagRepository().findTitleTag().give(
                             TagContent::text, "Server Log | User Account | wffweb demo");
-                    return new AbstractHtml[]{new RealtimeServerLogComponent()};
+                    return new AbstractHtml[]{new RealtimeServerLogComponent(documentModel)};
                 });
 
         componentDiv.whenURI(NavigationURI.USER.getPredicate(documentModel, componentDiv),

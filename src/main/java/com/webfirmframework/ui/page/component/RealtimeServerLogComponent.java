@@ -1,6 +1,8 @@
 package com.webfirmframework.ui.page.component;
 
 import com.webfirmframework.ui.page.common.GlobalSTC;
+import com.webfirmframework.ui.page.model.DocumentModel;
+import com.webfirmframework.wffweb.server.page.BrowserPageContext;
 import com.webfirmframework.wffweb.tag.html.AbstractHtml;
 import com.webfirmframework.wffweb.tag.html.H1;
 import com.webfirmframework.wffweb.tag.html.html5.attribute.global.Hidden;
@@ -14,21 +16,24 @@ import java.time.format.DateTimeFormatter;
 
 public class RealtimeServerLogComponent extends Div {
 
-    public RealtimeServerLogComponent() {
+    private volatile Boolean existedInBrowserPage;
+
+    public RealtimeServerLogComponent(DocumentModel documentModel) {
         super(null);
         GlobalSTC.LOGGER_STC.setContent(
                 ZonedDateTime.now(Clock.systemUTC()).format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss")) +
                         ":~$ created new RealtimeServerLogComponent");
-        develop();
+        develop(documentModel);
     }
 
-    private void develop() {
+    private void develop(DocumentModel documentModel) {
 
         new H1(this).give(TagContent::text, "Server Log (50 only)");
         Div logDiv = new Div(this);
 
-        //hidden div just to listen to logs
-        new Span(this, new Hidden()).subscribeTo(GlobalSTC.LOGGER_STC, content -> {
+        //hidden span just to listen to logs
+        Span hiddenSpan = new Span(this, new Hidden());
+        hiddenSpan.subscribeTo(GlobalSTC.LOGGER_STC, content -> {
 
             AbstractHtml log = new Div(null).give(TagContent::text, content.content());
             logDiv.appendChild(log);
@@ -40,6 +45,20 @@ public class RealtimeServerLogComponent extends Div {
 
             //we don't need to write anything to this span so returning null
             return null;
+        });
+
+        // to reduce GC overhead, manually removing LOGGER_STC from hiddenSpan if RealtimeServerLogComponent is not
+        // available in the UI
+        GlobalSTC.LOGGER_STC.addContentChangeListener(hiddenSpan, changeEvent -> () -> {
+            //this is a Runnable scope, returning Runnable works well only in wffweb-12.0.0 or later
+            final Boolean existed = this.existedInBrowserPage;
+            if (existed != null && existed
+                    && (!documentModel.browserPage().getTagRepository().exists(this)
+                    || !BrowserPageContext.INSTANCE.existsAndValid(documentModel.browserPage()))) {
+                hiddenSpan.removeSharedTagContent(false);
+            } else if (documentModel.browserPage().getTagRepository().exists(this)) {
+                this.existedInBrowserPage = true;
+            }
         });
 
     }
