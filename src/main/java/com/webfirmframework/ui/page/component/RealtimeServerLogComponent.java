@@ -9,6 +9,7 @@ import com.webfirmframework.wffweb.tag.html.html5.attribute.global.Hidden;
 import com.webfirmframework.wffweb.tag.html.stylesandsemantics.Div;
 import com.webfirmframework.wffweb.tag.html.stylesandsemantics.Span;
 import com.webfirmframework.wffweb.tag.htmlwff.TagContent;
+import com.webfirmframework.wffwebconfig.AppSettings;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -52,13 +53,20 @@ public class RealtimeServerLogComponent extends Div {
         GlobalSTC.LOGGER_STC.addContentChangeListener(hiddenSpan, changeEvent -> () -> {
             //this is a Runnable scope, returning Runnable works well only in wffweb-12.0.0 or later
             final Boolean existed = this.existedInBrowserPage;
-            if (existed != null && existed
-                    && (!documentModel.browserPage().getTagRepository().exists(this)
-                    || !BrowserPageContext.INSTANCE.existsAndValid(documentModel.browserPage()))) {
-                hiddenSpan.removeSharedTagContent(false);
-            } else if (documentModel.browserPage().getTagRepository().exists(this)) {
-                this.existedInBrowserPage = true;
+
+            if (existed != null && existed) {
+                AppSettings.CACHED_THREAD_POOL.execute(() -> {
+                    if (!BrowserPageContext.INSTANCE.existsAndValid(documentModel.browserPage())) {
+                        this.existedInBrowserPage = false;
+                        hiddenSpan.removeSharedTagContent(false);
+                    }
+                });
             }
+        });
+        RealtimeServerLogComponent.this.addParentGainedListener(event -> RealtimeServerLogComponent.this.existedInBrowserPage = true);
+        RealtimeServerLogComponent.this.addParentLostListener(event -> {
+            RealtimeServerLogComponent.this.existedInBrowserPage = false;
+            AppSettings.CACHED_THREAD_POOL.execute(() -> hiddenSpan.removeSharedTagContent(false));
         });
 
     }
