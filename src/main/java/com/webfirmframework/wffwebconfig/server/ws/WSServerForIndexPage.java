@@ -184,7 +184,7 @@ public class WSServerForIndexPage extends Configurator {
     @OnMessage
     public void onMessage(ByteBuffer msgPart, boolean last, Session session) {
         final PayloadProcessor payloadProcessor = this.payloadProcessor;
-        if (payloadProcessor != null) {
+        if (payloadProcessor != null && payloadProcessor.isValid(ServerConstants.SESSION_TIMEOUT_MILLISECONDS)) {
             payloadProcessor.webSocketMessaged(msgPart, last);
             if (last && msgPart.capacity() == 0) {
                 LOGGER.info("client ping message.length == 0");
