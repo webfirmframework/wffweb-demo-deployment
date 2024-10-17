@@ -1,4 +1,4 @@
-# wffweb demo app with wffweb-12.0.0
+# wffweb demo app with wffweb-12.x.x
 #### It contains sample code for url rewriting/routing, JWT token based authentication/authorization and configuration for multi node support for scaling.
 
 [Fork](https://github.com/webfirmframework/wffweb-demo-deployment/fork) and [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
@@ -16,7 +16,6 @@ After deployed to Heroku, set the following config vars in Heroku Settings
 | ENABLE_HEARTBEAT  (required only if Heroku)  |         true                    |
 
 
-##### This demo project is deployed at [wffweb.herokuapp.com](https://wffweb.herokuapp.com)
 
 ##### To run this project in your local machine, open this project with IntelliJ IDEA as a maven project and run `com.webfirmframework.web.launcher.Main.main` method.
 
