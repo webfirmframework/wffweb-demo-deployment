@@ -112,8 +112,9 @@ public class IndexPageLayout extends Html {
         });
 
         //To remove serverMethod added by SampleFilesUploadComponent if the uri is not NavigationURI.SAMPLE_FILES_UPLOAD
-        new NoTag(mainDiv).whenURI(uriEvent -> !NavigationURI.SAMPLE_FILES_UPLOAD.getUri(documentModel).equals(uriEvent.uriAfter()),
-                tagEvent -> documentModel.browserPage().removeServerMethod(SampleFilesUploadComponent.FILE_UPLOAD_SERVER_METHOD));
+        //but since wffweb-12.0.1 it can be achieved by adding ParentLostListener on the component
+//        new NoTag(mainDiv).whenURI(uriEvent -> !NavigationURI.SAMPLE_FILES_UPLOAD.getUri(documentModel).equals(uriEvent.uriAfter()),
+//                tagEvent -> documentModel.browserPage().removeServerMethod(SampleFilesUploadComponent.FILE_UPLOAD_SERVER_METHOD));
 
         URIStateSwitch componentDiv = new Div(mainDiv);
 

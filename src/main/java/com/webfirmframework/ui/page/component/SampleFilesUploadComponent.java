@@ -115,6 +115,8 @@ public class SampleFilesUploadComponent extends Div {
             return null;
         });
 
+        SampleFilesUploadComponent.super.addParentLostListener(event -> documentModel.browserPage().removeServerMethod(FILE_UPLOAD_SERVER_METHOD));
+
         final String fileUploadURL = ServerConstants.DOMAIN_URL + documentModel.contextPath() + ServerConstants.FILE_UPLOAD_URI;
         new Form(this, new Id("fileUploadForm"), new OnSubmit(true, """
                 loadingIcon.hidden = false;
