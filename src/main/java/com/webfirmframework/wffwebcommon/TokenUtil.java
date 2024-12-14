@@ -7,8 +7,8 @@ import java.util.Map;
 
 public final class TokenUtil {
 
-    public static boolean isValidJWT(LocalStorage.Item token) {
-        return MultiInstanceTokenUtil.AUTHORIZATION.isValidJWT(token);
+    public static boolean isValidJWT(LocalStorage.Item token, String sessionId) {
+        return MultiInstanceTokenUtil.AUTHORIZATION.isValidJWT(token, sessionId);
     }
 
     public static JSONObject getPayloadFromJWT(LocalStorage.Item token) {

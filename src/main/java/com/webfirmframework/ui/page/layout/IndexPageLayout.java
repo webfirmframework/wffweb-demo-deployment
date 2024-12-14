@@ -138,7 +138,7 @@ public class IndexPageLayout extends Html {
 
                     LocalStorage.Item token = documentModel.session().localStorage().getToken("jwtToken");
                     //if already logged in then navigate to user account page otherwise navigate to login page
-                    if (TokenUtil.isValidJWT(token)) {
+                    if (TokenUtil.isValidJWT(token, documentModel.session().id())) {
                         documentModel.browserPage().setURI(NavigationURI.USER.getUri(documentModel));
                     } else {
                         documentModel.browserPage().setURI(NavigationURI.LOGIN.getUri(documentModel));
