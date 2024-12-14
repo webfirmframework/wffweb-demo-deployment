@@ -65,7 +65,7 @@ public class LoginComponent extends Div {
             if ("test".equals(username) && Arrays.equals("test".toCharArray(), passwordChars)) {
 
                 Map<String, Object> payload = Map.of("userId", 5, "username", "test", "role", "user");
-                documentModel.session().localStorage().setToken("jwtToken", TokenUtil.createJWT(payload));
+                documentModel.session().localStorage().setToken("jwtToken", TokenUtil.createJWT(payload, documentModel.session().id()));
                 //navigate to user account page on all other opened tabs
                 //This works well on multi node mode
                 documentModel.browserPage().getTagRepository()
