@@ -31,19 +31,15 @@ public enum MultiInstanceTokenUtil {
         verifier = JWT.require(algorithmHS).withIssuer(issuer).build();
     }
 
-    public boolean isValidJWT(LocalStorage.Item token) {
-        if (token != null) {
+    public boolean isValidJWT(final LocalStorage.Item token, final String sessionId) {
+        if (token != null && sessionId != null) {
             try {
-                JWTVerifier verifier = JWT.require(algorithmHS)
-                        .withIssuer(issuer)
-                        .build(); //Reusable verifier instance
-                DecodedJWT jwt = verifier.verify(token.value());
-                return true;
+                final DecodedJWT jwt = verifier.verify(token.value());
+                return sessionId.equals(jwt.getClaim("sid").asString());
             } catch (JWTVerificationException e) {
                 //Invalid signature/claims
             }
         }
-
         return false;
     }
 
