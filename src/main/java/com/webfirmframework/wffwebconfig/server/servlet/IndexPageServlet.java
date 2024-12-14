@@ -2,7 +2,7 @@ package com.webfirmframework.wffwebconfig.server.servlet;
 
 import com.webfirmframework.wffweb.server.page.BrowserPageContext;
 import com.webfirmframework.wffweb.server.page.BrowserPageSession;
-import com.webfirmframework.wffwebcommon.TokenUtil;
+import com.webfirmframework.wffwebcommon.MultiInstanceTokenUtil;
 import com.webfirmframework.wffwebconfig.page.IndexPage;
 import com.webfirmframework.wffwebconfig.server.constants.ServerConstants;
 import jakarta.servlet.ServletException;
@@ -74,9 +74,7 @@ public class IndexPageServlet extends HttpServlet {
                 for (Cookie cookie : cookies) {
                     if (ServerConstants.WFFWEB_TOKEN_COOKIE.equals(cookie.getName())) {
                         if (cookie.getValue() != null) {
-                            JSONObject json = TokenUtil.getPayloadFromJWT(cookie.getValue());
-                            final Object id = json != null ? json.get("id") : null;
-                            httpSessionId = id != null ? String.valueOf(id) : null;
+                            httpSessionId = MultiInstanceTokenUtil.SESSION.getSessionIdClaimFromJWT(cookie.getValue());
                             break;
                         }
                     }
@@ -84,7 +82,7 @@ public class IndexPageServlet extends HttpServlet {
             }
             if (httpSessionId == null) {
                 httpSessionId = UUID.randomUUID().toString();
-                Cookie cookie = new Cookie(ServerConstants.WFFWEB_TOKEN_COOKIE, TokenUtil.createJWT(Map.of("id", httpSessionId)));
+                Cookie cookie = new Cookie(ServerConstants.WFFWEB_TOKEN_COOKIE, MultiInstanceTokenUtil.SESSION.createJWT(Map.of(), httpSessionId));
                 cookie.setPath(contextPath + "/ui");
                 cookie.setMaxAge(-1);
                 cookie.setHttpOnly(true);
