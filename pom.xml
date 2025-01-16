@@ -90,7 +90,8 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>appassembler-maven-plugin</artifactId>
 				<version>2.1.0</version>
-				<configuration>					
+				<configuration>
+					<extraJvmArguments>-server</extraJvmArguments>
 					<assembleDirectory>target</assembleDirectory>
 					<programs>
 						<program>

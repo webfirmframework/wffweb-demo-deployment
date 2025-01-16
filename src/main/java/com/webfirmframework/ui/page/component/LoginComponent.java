@@ -4,8 +4,6 @@ import com.webfirmframework.ui.page.common.GlobalSTC;
 import com.webfirmframework.ui.page.common.NavigationURI;
 import com.webfirmframework.ui.page.css.Bootstrap5CssClass;
 import com.webfirmframework.ui.page.model.DocumentModel;
-import com.webfirmframework.wffweb.server.page.BrowserPage;
-import com.webfirmframework.wffweb.server.page.BrowserPageContext;
 import com.webfirmframework.wffweb.tag.html.attribute.AttributeNameConstants;
 import com.webfirmframework.wffweb.tag.html.attribute.Name;
 import com.webfirmframework.wffweb.tag.html.attribute.Type;
@@ -19,8 +17,10 @@ import com.webfirmframework.wffweb.tag.html.html5.attribute.Placeholder;
 import com.webfirmframework.wffweb.tag.html.stylesandsemantics.Div;
 import com.webfirmframework.wffweb.tag.htmlwff.TagContent;
 import com.webfirmframework.wffweb.wffbm.data.WffBMByteArray;
-import com.webfirmframework.wffwebcommon.TokenUtil;
+import com.webfirmframework.wffwebcommon.CookieUtil;
+import com.webfirmframework.wffwebcommon.MultiInstanceTokenUtil;
 
+import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
@@ -62,17 +62,18 @@ public class LoginComponent extends Div {
             //to convert UTF-8 byte array to char array
             char[] passwordChars = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(password.toByteArray())).array();
 
+            //TODO make needful db calls to check credentials
             if ("test".equals(username) && Arrays.equals("test".toCharArray(), passwordChars)) {
+                //TODO include needful details in the payload
+                Map<String, Object> payload = Map.of("userId", 5, "username", username, "role", "user");
 
-                Map<String, Object> payload = Map.of("userId", 5, "username", "test", "role", "user");
-                documentModel.session().localStorage().setToken("jwtToken", TokenUtil.createJWT(payload, documentModel.session().id()));
-                //navigate to user account page on all other opened tabs
-                //This works well on multi node mode
-                documentModel.browserPage().getTagRepository()
-                        .executeJsInOtherBrowserPages(
-                                "wffAsync.setURI('%s');".formatted(NavigationURI.USER.getUri(documentModel)));
-                //navigate to user account page
-                documentModel.browserPage().setURI(NavigationURI.USER.getUri(documentModel));
+                final String loginId = UUID.randomUUID().toString();
+                documentModel.session().localStorage().setToken("jwtToken", MultiInstanceTokenUtil.AUTHORIZATION.createJWT(payload, documentModel.session().id(), loginId));
+                final String loginToken = CookieUtil.createLoginToken(documentModel.session().id(), loginId);
+
+                final String userAccURI = "window.location.replace('%s?loginToken=%s');".formatted(NavigationURI.USER.getUri(documentModel), URLEncoder.encode(loginToken, StandardCharsets.UTF_8));
+                documentModel.browserPage().getTagRepository().executeJsInOtherBrowserPages(userAccURI);
+                documentModel.browserPage().getTagRepository().executeJs(userAccURI);
                 return null;
             }
 

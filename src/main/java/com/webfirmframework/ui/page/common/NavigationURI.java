@@ -1,14 +1,11 @@
 package com.webfirmframework.ui.page.common;
 
 import com.webfirmframework.ui.page.model.DocumentModel;
-import com.webfirmframework.wffweb.InvalidValueException;
 import com.webfirmframework.wffweb.common.URIEvent;
-import com.webfirmframework.wffweb.server.page.LocalStorage;
 import com.webfirmframework.wffweb.tag.html.URIStateSwitch;
 import com.webfirmframework.wffweb.util.URIUtil;
-import com.webfirmframework.wffwebcommon.TokenUtil;
+import com.webfirmframework.wffwebcommon.MultiInstanceTokenUtil;
 
-import java.util.Map;
 import java.util.function.Predicate;
 
 public enum NavigationURI {
@@ -46,7 +43,7 @@ public enum NavigationURI {
     /**
      * @param uri
      * @param parentPath
-     * @param patternOrQueryParamType   true if the uri contains path params
+     * @param patternOrQueryParamType true if the uri contains path params
      * @param loginRequired
      */
     NavigationURI(String uri, boolean parentPath, boolean patternOrQueryParamType, boolean loginRequired) {
@@ -56,23 +53,17 @@ public enum NavigationURI {
         this.loginRequired = loginRequired;
     }
 
-    public Predicate<URIEvent> getPredicate(DocumentModel documentModel) {
-        return getPredicate(documentModel, null);
-    }
-
     public Predicate<URIEvent> getPredicate(DocumentModel documentModel, URIStateSwitch forTag) {
         if (forTag == null) {
             throw new IllegalArgumentException("tag is null");
         }
 
-        LocalStorage localStorage = documentModel.session().localStorage();
-        String contextPath = documentModel.contextPath();
-        String sessionId = documentModel.session().id();
+        final String contextPath = documentModel.contextPath();
         if (NavigationURI.LOGIN.equals(this)) {
             return uriEvent -> {
                 forTag.getCurrentWhenURIProperties().setPreventDuplicateSuccess(true);
                 forTag.getCurrentWhenURIProperties().setPreventDuplicateFail(true);
-                return !TokenUtil.isValidJWT(localStorage.getToken("jwtToken"), sessionId) && contextPath.concat(this.uri).equals(uriEvent.uriAfter());
+                return !MultiInstanceTokenUtil.hasValidJWT(documentModel) && contextPath.concat(this.uri).equals(uriEvent.uriAfter());
             };
         }
         if (!loginRequired && !parentPath) {
@@ -90,16 +81,16 @@ public enum NavigationURI {
         }
         if (loginRequired && parentPath) {
             if (patternOrQueryParamType) {
-                return uriEvent -> TokenUtil.isValidJWT(localStorage.getToken("jwtToken"), sessionId) && URIUtil.patternMatchesBase(this.uri, uriEvent.uriAfter());
+                return uriEvent -> MultiInstanceTokenUtil.hasValidJWT(documentModel) && URIUtil.patternMatchesBase(this.uri, uriEvent.uriAfter());
             }
             return uriEvent -> {
                 forTag.getCurrentWhenURIProperties().setPreventDuplicateSuccess(true);
                 forTag.getCurrentWhenURIProperties().setPreventDuplicateFail(true);
-                return TokenUtil.isValidJWT(localStorage.getToken("jwtToken"), sessionId) && uriEvent.uriAfter().startsWith(contextPath.concat(this.uri));
+                return MultiInstanceTokenUtil.hasValidJWT(documentModel) && uriEvent.uriAfter().startsWith(contextPath.concat(this.uri));
             };
         } else if (loginRequired) {
             if (patternOrQueryParamType) {
-                return uriEvent -> TokenUtil.isValidJWT(localStorage.getToken("jwtToken"), sessionId) && URIUtil.patternMatches(this.uri, uriEvent.uriAfter());
+                return uriEvent -> MultiInstanceTokenUtil.hasValidJWT(documentModel) && URIUtil.patternMatches(this.uri, uriEvent.uriAfter());
             }
         }
         return uriEvent -> {
@@ -107,7 +98,7 @@ public enum NavigationURI {
                 forTag.getCurrentWhenURIProperties().setPreventDuplicateSuccess(true);
                 forTag.getCurrentWhenURIProperties().setPreventDuplicateFail(true);
             }
-            return TokenUtil.isValidJWT(localStorage.getToken("jwtToken"), sessionId) && contextPath.concat(this.uri).equals(URIUtil.parse(uriEvent.uriAfter()).pathname());
+            return MultiInstanceTokenUtil.hasValidJWT(documentModel) && contextPath.concat(this.uri).equals(URIUtil.parse(uriEvent.uriAfter()).pathname());
         };
     }
 
