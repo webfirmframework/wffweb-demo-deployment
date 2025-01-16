@@ -2,16 +2,18 @@ package com.webfirmframework.wffwebconfig.server.servlet;
 
 import com.webfirmframework.wffweb.server.page.BrowserPageContext;
 import com.webfirmframework.wffweb.server.page.BrowserPageSession;
+import com.webfirmframework.wffweb.util.URIUtil;
+import com.webfirmframework.wffwebcommon.CookieUtil;
 import com.webfirmframework.wffwebcommon.MultiInstanceTokenUtil;
 import com.webfirmframework.wffwebconfig.page.IndexPage;
 import com.webfirmframework.wffwebconfig.server.constants.ServerConstants;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -66,27 +68,44 @@ public class IndexPageServlet extends HttpServlet {
 
         final String contextPath = request.getServletContext().getContextPath();
 
-        String httpSessionId = null;
+        String httpSessionId;
         HttpSession session = null;
+        String loginId;
         if (ServerConstants.MULTI_NODE_MODE) {
-            final Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if (ServerConstants.WFFWEB_TOKEN_COOKIE.equals(cookie.getName())) {
-                        if (cookie.getValue() != null) {
-                            httpSessionId = MultiInstanceTokenUtil.SESSION.getSessionIdClaimFromJWT(cookie.getValue());
-                            break;
-                        }
-                    }
-                }
-            }
+            final MultiInstanceTokenUtil.ParsedPayloadAndClaims httpSessionDetails = CookieUtil.getHttpSessionDetails(request);
+            httpSessionId = httpSessionDetails != null ? httpSessionDetails.sessionId() : null;
+            loginId = httpSessionDetails != null ? httpSessionDetails.loginId() : null;
             if (httpSessionId == null) {
                 httpSessionId = UUID.randomUUID().toString();
-                Cookie cookie = new Cookie(ServerConstants.WFFWEB_TOKEN_COOKIE, MultiInstanceTokenUtil.SESSION.createJWT(Map.of(), httpSessionId));
+                final Cookie cookie = CookieUtil.createCookie(httpSessionId);
                 cookie.setPath(contextPath + "/ui");
                 cookie.setMaxAge(-1);
                 cookie.setHttpOnly(true);
                 response.addCookie(cookie);
+            } else {
+                final String loginToken = request.getParameter("loginToken");
+                if (loginToken != null) {
+                    final Map<String, String[]> queryParamsMap = new HashMap<>(request.getParameterMap());
+                    queryParamsMap.remove("loginToken");
+                    try {
+                        loginId = CookieUtil.parseLoginIdFromLoginToken(httpSessionId, loginToken);
+                    } catch (CookieUtil.InvalidLoginIdException e) {
+                        response.sendRedirect(request.getRequestURI().concat(buildQueryString(queryParamsMap)));
+                        return;
+                    }
+                    final Cookie cookie = CookieUtil.createCookie(httpSessionId, loginId);
+                    cookie.setPath(contextPath + "/ui");
+                    // expire only if not logged in
+                    if (loginId == null) {
+                        cookie.setMaxAge(-1);
+                    } else {
+                        cookie.setMaxAge(60 * 60 * 24 * 365);
+                    }
+                    cookie.setHttpOnly(true);
+                    response.addCookie(cookie);
+                    response.sendRedirect(request.getRequestURI().concat(buildQueryString(queryParamsMap)));
+                    return;
+                }
             }
         } else {
             session = request.getSession();
@@ -94,12 +113,17 @@ public class IndexPageServlet extends HttpServlet {
             session.setMaxInactiveInterval(ServerConstants.SESSION_TIMEOUT_SECONDS);
         }
 
-        BrowserPageSession bpSession = BrowserPageContext.INSTANCE.getSession(httpSessionId, true);
+        final BrowserPageSession bpSession = BrowserPageContext.INSTANCE.getSession(httpSessionId, true);
+        if (loginId != null) {
+            bpSession.userProperties().put("loginId", loginId);
+        } else {
+            bpSession.userProperties().remove("loginId");
+        }
         if (session != null) {
             bpSession.setWeakProperty("httpSession", session);
         }
 
-        IndexPage indexPage = new IndexPage(contextPath, bpSession, contextPath + request.getRequestURI());
+        final IndexPage indexPage = new IndexPage(contextPath, bpSession, contextPath + request.getRequestURI());
 
         BrowserPageContext.INSTANCE.addBrowserPage(httpSessionId,
                 indexPage);
@@ -109,6 +133,14 @@ public class IndexPageServlet extends HttpServlet {
             os.flush();
         }
 
+    }
+
+    private static String buildQueryString(final Map<String, String[]> parameters) {
+        final String queryString = URIUtil.buildQueryStringFromNameToValues(parameters);
+        if (!queryString.isBlank()) {
+            return "?".concat(queryString);
+        }
+        return "";
     }
 
 }

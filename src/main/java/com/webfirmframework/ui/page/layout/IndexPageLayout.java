@@ -3,12 +3,10 @@ package com.webfirmframework.ui.page.layout;
 import com.webfirmframework.ui.page.common.NavigationURI;
 import com.webfirmframework.ui.page.component.LoginComponent;
 import com.webfirmframework.ui.page.component.RealtimeServerLogComponent;
-import com.webfirmframework.ui.page.component.SampleFilesUploadComponent;
 import com.webfirmframework.ui.page.component.UserAccountComponent;
 import com.webfirmframework.ui.page.model.DocumentModel;
 import com.webfirmframework.wffweb.server.page.BrowserPage;
 import com.webfirmframework.wffweb.server.page.BrowserPageSession;
-import com.webfirmframework.wffweb.server.page.LocalStorage;
 import com.webfirmframework.wffweb.tag.html.*;
 import com.webfirmframework.wffweb.tag.html.attribute.*;
 import com.webfirmframework.wffweb.tag.html.attribute.global.ClassAttribute;
@@ -25,7 +23,7 @@ import com.webfirmframework.wffweb.tag.html.stylesandsemantics.Div;
 import com.webfirmframework.wffweb.tag.html.stylesandsemantics.Span;
 import com.webfirmframework.wffweb.tag.htmlwff.NoTag;
 import com.webfirmframework.wffweb.tag.htmlwff.TagContent;
-import com.webfirmframework.wffwebcommon.TokenUtil;
+import com.webfirmframework.wffwebcommon.MultiInstanceTokenUtil;
 
 import java.util.logging.Logger;
 
@@ -136,9 +134,8 @@ public class IndexPageLayout extends Html {
                 () -> new AbstractHtml[]{new UserAccountComponent(documentModel)},
                 event -> {
 
-                    LocalStorage.Item token = documentModel.session().localStorage().getToken("jwtToken");
                     //if already logged in then navigate to user account page otherwise navigate to login page
-                    if (TokenUtil.isValidJWT(token, documentModel.session().id())) {
+                    if (MultiInstanceTokenUtil.hasValidJWT(documentModel)) {
                         documentModel.browserPage().setURI(NavigationURI.USER.getUri(documentModel));
                     } else {
                         documentModel.browserPage().setURI(NavigationURI.LOGIN.getUri(documentModel));

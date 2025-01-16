@@ -16,7 +16,7 @@ import com.webfirmframework.wffweb.tag.html.stylesandsemantics.Div;
 import com.webfirmframework.wffweb.tag.htmlwff.NoTag;
 import com.webfirmframework.wffweb.tag.htmlwff.TagContent;
 import com.webfirmframework.wffweb.util.URIUtil;
-import com.webfirmframework.wffwebcommon.TokenUtil;
+import com.webfirmframework.wffwebcommon.MultiInstanceTokenUtil;
 import org.json.JSONObject;
 
 import java.time.Clock;
@@ -38,7 +38,7 @@ public class UserAccountComponent extends Div {
     }
 
     private void develop() {
-        JSONObject user = TokenUtil.getPayloadFromJWT(documentModel.session().localStorage().getToken("jwtToken"));
+        final JSONObject user = MultiInstanceTokenUtil.AUTHORIZATION.getPayloadFromJWT(documentModel.session().localStorage().getToken("jwtToken"));
         new H1(this).give(TagContent::text, "Welcome " + user.get("username"));
         new Hr(this);
         new Button(this,
@@ -47,15 +47,14 @@ public class UserAccountComponent extends Div {
 //                    documentModel.session().localStorage().removeToken("jwtToken");
                     //on logout all localStorage items and tokens should be cleared not just jwtToken so calling clear() method
                     documentModel.session().localStorage().clear();
+                    documentModel.session().userProperties().clear();
 
+                    final String loginURI = "window.location.replace('%s' + '?loginToken=');".formatted(NavigationURI.LOGIN.getUri(documentModel));
                     //navigate to login page on all other opened tabs
                     //This works well on multi node mode
-                    documentModel.browserPage().getTagRepository()
-                            .executeJsInOtherBrowserPages(
-                                    "wffAsync.setURI('%s');".formatted(NavigationURI.LOGIN.getUri(documentModel)));
-
+                    documentModel.browserPage().getTagRepository().executeJsInOtherBrowserPages(loginURI);
                     //navigate to login page
-                    documentModel.browserPage().setURI(NavigationURI.LOGIN.getUri(documentModel));
+                    documentModel.browserPage().getTagRepository().executeJs(loginURI);
                     return null;
                 }))
                 .give(TagContent::text, "Logout");
