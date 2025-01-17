@@ -58,39 +58,39 @@ public enum NavigationURI {
             throw new IllegalArgumentException("tag is null");
         }
 
-        final String contextPath = documentModel.contextPath();
+        final String uriWithContextPath = documentModel.contextPath().concat(this.uri);
         if (NavigationURI.LOGIN.equals(this)) {
             return uriEvent -> {
                 forTag.getCurrentWhenURIProperties().setPreventDuplicateSuccess(true);
                 forTag.getCurrentWhenURIProperties().setPreventDuplicateFail(true);
-                return !MultiInstanceTokenUtil.hasValidJWT(documentModel) && contextPath.concat(this.uri).equals(uriEvent.uriAfter());
+                return !MultiInstanceTokenUtil.hasValidJWT(documentModel.session()) && uriWithContextPath.equals(uriEvent.uriAfter());
             };
         }
         if (!loginRequired && !parentPath) {
             if (patternOrQueryParamType) {
                 //no need to set setPreventDuplicateSuccess(true) and setPreventDuplicateFail(true) for
                 // patternType uri i.e. which contains path params
-                return uriEvent -> contextPath.concat(this.uri).equals(URIUtil.parse(uriEvent.uriAfter()).pathname());
+                return uriEvent -> uriWithContextPath.equals(URIUtil.parse(uriEvent.uriAfter()).pathname());
             } else {
                 return uriEvent -> {
                     forTag.getCurrentWhenURIProperties().setPreventDuplicateSuccess(true);
                     forTag.getCurrentWhenURIProperties().setPreventDuplicateFail(true);
-                    return contextPath.concat(this.uri).equals(URIUtil.parse(uriEvent.uriAfter()).pathname());
+                    return uriWithContextPath.equals(URIUtil.parse(uriEvent.uriAfter()).pathname());
                 };
             }
         }
         if (loginRequired && parentPath) {
             if (patternOrQueryParamType) {
-                return uriEvent -> MultiInstanceTokenUtil.hasValidJWT(documentModel) && URIUtil.patternMatchesBase(this.uri, uriEvent.uriAfter());
+                return uriEvent -> MultiInstanceTokenUtil.hasValidJWT(documentModel.session()) && URIUtil.patternMatchesBase(uriWithContextPath, uriEvent.uriAfter());
             }
             return uriEvent -> {
                 forTag.getCurrentWhenURIProperties().setPreventDuplicateSuccess(true);
                 forTag.getCurrentWhenURIProperties().setPreventDuplicateFail(true);
-                return MultiInstanceTokenUtil.hasValidJWT(documentModel) && uriEvent.uriAfter().startsWith(contextPath.concat(this.uri));
+                return MultiInstanceTokenUtil.hasValidJWT(documentModel.session()) && uriEvent.uriAfter().startsWith(uriWithContextPath);
             };
         } else if (loginRequired) {
             if (patternOrQueryParamType) {
-                return uriEvent -> MultiInstanceTokenUtil.hasValidJWT(documentModel) && URIUtil.patternMatches(this.uri, uriEvent.uriAfter());
+                return uriEvent -> MultiInstanceTokenUtil.hasValidJWT(documentModel.session()) && URIUtil.patternMatches(uriWithContextPath, uriEvent.uriAfter());
             }
         }
         return uriEvent -> {
@@ -98,7 +98,7 @@ public enum NavigationURI {
                 forTag.getCurrentWhenURIProperties().setPreventDuplicateSuccess(true);
                 forTag.getCurrentWhenURIProperties().setPreventDuplicateFail(true);
             }
-            return MultiInstanceTokenUtil.hasValidJWT(documentModel) && contextPath.concat(this.uri).equals(URIUtil.parse(uriEvent.uriAfter()).pathname());
+            return MultiInstanceTokenUtil.hasValidJWT(documentModel.session()) && uriWithContextPath.equals(URIUtil.parse(uriEvent.uriAfter()).pathname());
         };
     }
 

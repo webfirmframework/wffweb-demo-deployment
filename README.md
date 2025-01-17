@@ -16,6 +16,7 @@ After deployed to Heroku, set the following config vars in Heroku Settings
 | ENABLE_HEARTBEAT  (required only if Heroku)  |         true                    |
 
 
+##### NB: Do not forget to change random secret string in `com.webfirmframework.wffwebcommon.MultiInstanceTokenUtil` class before deployment.
 
 ##### To run this project in your local machine, open this project with IntelliJ IDEA as a maven project and run `com.webfirmframework.web.launcher.Main.main` method.
 

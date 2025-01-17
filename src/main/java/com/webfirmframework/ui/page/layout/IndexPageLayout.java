@@ -135,7 +135,7 @@ public class IndexPageLayout extends Html {
                 event -> {
 
                     //if already logged in then navigate to user account page otherwise navigate to login page
-                    if (MultiInstanceTokenUtil.hasValidJWT(documentModel)) {
+                    if (MultiInstanceTokenUtil.hasValidJWT(documentModel.session())) {
                         documentModel.browserPage().setURI(NavigationURI.USER.getUri(documentModel));
                     } else {
                         documentModel.browserPage().setURI(NavigationURI.LOGIN.getUri(documentModel));
