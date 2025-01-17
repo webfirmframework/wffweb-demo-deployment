@@ -6,7 +6,6 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import com.webfirmframework.ui.page.model.DocumentModel;
 import com.webfirmframework.wffweb.server.page.BrowserPageSession;
 import com.webfirmframework.wffweb.server.page.LocalStorage;
 import org.json.JSONObject;
@@ -18,8 +17,10 @@ import java.util.Map;
 
 public enum MultiInstanceTokenUtil {
 
+    // TODO initialize your own random unique string
     SESSION("wffweb", "dfskfjsdoidksfksdfkjjerdfi#%^@&*)@$*+-h'sdwew]s"),
 
+    // TODO initialize your own random unique string
     AUTHORIZATION("wffweb", "dfuewpoqwd-0i123';xc-00-23874023497823jnzX<mDF38=4s");
 
     private final String issuer;
@@ -53,8 +54,7 @@ public enum MultiInstanceTokenUtil {
         return false;
     }
 
-    public static boolean hasValidJWT(final DocumentModel documentModel) {
-        final BrowserPageSession session = documentModel.session();
+    public static boolean hasValidJWT(final BrowserPageSession session) {
         final LocalStorage localStorage = session.localStorage();
         final LocalStorage.Item jwtToken = localStorage.getToken("jwtToken");
         final String loginId = (String) session.userProperties().get("loginId");
