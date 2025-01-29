@@ -34,7 +34,7 @@ public enum MultiInstanceTokenUtil {
 
     MultiInstanceTokenUtil(final String issuer, final String secret) {
         this.issuer = issuer;
-        algorithmHS = Algorithm.HMAC256(secret.getBytes(StandardCharsets.UTF_8));
+        algorithmHS = Algorithm.HMAC512(secret.getBytes(StandardCharsets.UTF_8));
         verifier = JWT.require(algorithmHS).withIssuer(issuer).build();
     }
 

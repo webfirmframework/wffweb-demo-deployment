@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import java.time.Clock;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 
 public final class CookieUtil {
 
@@ -68,7 +69,7 @@ public final class CookieUtil {
         final Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             return Arrays.stream(cookies).filter(cookie -> (ServerConstants.WFFWEB_TOKEN_COOKIE.equals(cookie.getName()) && cookie.getValue() != null))
-                    .map(cookie -> MultiInstanceTokenUtil.SESSION.getParsedClaimsFromJWT(cookie.getValue())).findAny().orElse(null);
+                    .map(cookie -> MultiInstanceTokenUtil.SESSION.getParsedClaimsFromJWT(cookie.getValue())).filter(Objects::nonNull).findAny().orElse(null);
         }
         return null;
     }
