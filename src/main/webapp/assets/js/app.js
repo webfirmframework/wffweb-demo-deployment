@@ -41,6 +41,7 @@ function invokeServerMethod() {
 		'string' : 'pound sign £ string value こんにちは',
 		'numb' : 55555,
 		'negNumb' : -55555,
+		'doubleNumb' : 14.01,
 		'bool' : true,
 		'regex' : /ab+c/,
 		'anObj' : {
