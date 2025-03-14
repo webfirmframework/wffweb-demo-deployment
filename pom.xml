@@ -34,7 +34,7 @@
 		<dependency>
 			<groupId>com.webfirmframework</groupId>
 			<artifactId>wffweb</artifactId>
-			<version>12.0.3</version>
+			<version>12.0.4</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tomcat.embed</groupId>
@@ -66,13 +66,6 @@
 			<artifactId>java-jwt</artifactId>
 			<version>4.4.0</version>
 		</dependency>
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20250107</version>
-		</dependency>
-
-
 	</dependencies>
 
 	<build>

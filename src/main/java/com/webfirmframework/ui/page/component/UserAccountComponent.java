@@ -17,7 +17,6 @@ import com.webfirmframework.wffweb.tag.htmlwff.NoTag;
 import com.webfirmframework.wffweb.tag.htmlwff.TagContent;
 import com.webfirmframework.wffweb.util.URIUtil;
 import com.webfirmframework.wffwebcommon.MultiInstanceTokenUtil;
-import org.json.JSONObject;
 
 import java.time.Clock;
 import java.time.ZonedDateTime;
@@ -38,7 +37,7 @@ public class UserAccountComponent extends Div {
     }
 
     private void develop() {
-        final JSONObject user = MultiInstanceTokenUtil.AUTHORIZATION.getPayloadFromJWT(documentModel.session().localStorage().getToken("jwtToken"));
+        final Map<String, Object> user = MultiInstanceTokenUtil.AUTHORIZATION.getPayloadFromJWT(documentModel.session().localStorage().getToken("jwtToken"));
         new H1(this).give(TagContent::text, "Welcome " + user.get("username"));
         new Hr(this);
         new Button(this,

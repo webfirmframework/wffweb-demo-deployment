@@ -3,7 +3,6 @@ package com.webfirmframework.wffwebcommon;
 import com.webfirmframework.wffwebconfig.server.constants.ServerConstants;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import org.json.JSONObject;
 
 import java.time.Clock;
 import java.util.Arrays;
@@ -31,13 +30,13 @@ public final class CookieUtil {
             if (loginToken.isBlank()) {
                 return null;
             } else {
-                final JSONObject payloadFromJWT = MultiInstanceTokenUtil.SESSION.getPayloadFromJWT(loginToken);
+                final Map<String, Object> payloadFromJWT = MultiInstanceTokenUtil.SESSION.getPayloadFromJWT(loginToken);
                 if (payloadFromJWT == null) {
                     //if token is expired payload will be null so it should return null to logout.
                     return null;
                 }
-                final String loginId = payloadFromJWT.getString(CookieUtil.LOGIN_ID_PARAM_NAME);
-                final String sessionId = payloadFromJWT.getString("sid");
+                final String loginId = (String) payloadFromJWT.get(CookieUtil.LOGIN_ID_PARAM_NAME);
+                final String sessionId = (String) payloadFromJWT.get("sid");
                 if (httpSessionId.equals(sessionId)) {
                     return loginId;
                 }
