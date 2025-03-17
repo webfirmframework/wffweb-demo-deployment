@@ -14,7 +14,7 @@
 		<java.version>17</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<tomcat.version>11.0.2</tomcat.version>
+		<tomcat.version>11.0.3</tomcat.version>
 	</properties>
 
 	<repositories>
