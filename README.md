@@ -1,7 +1,7 @@
 # wffweb demo app with wffweb-12.x.x
 #### It contains sample code for url rewriting/routing, JWT token based authentication/authorization and configuration for multi node support for scaling.
 
-[Fork](https://github.com/webfirmframework/wffweb-demo-deployment/fork) and [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://www.heroku.com/deploy?template=https://github.com/webfirmframework/wffweb-demo-deployment))
+[Fork](https://github.com/webfirmframework/wffweb-demo-deployment/fork) and [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://www.heroku.com/deploy?template=https://github.com/webfirmframework/wffweb-demo-deployment)
 
 After deployed to Heroku, set the following config vars in Heroku Settings
 
