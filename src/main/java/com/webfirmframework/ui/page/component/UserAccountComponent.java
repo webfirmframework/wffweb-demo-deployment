@@ -243,6 +243,23 @@ public class UserAccountComponent extends Div {
         new Br(this);
         new Br(this);
 
+        final String sampleFilesUploadWithoutActionUrlUri = NavigationURI.SAMPLE_FILES_UPLOAD_WITHOUT_ACTION_URL_COMPONENT.getUri(documentModel);
+        //navigation using server side setURI method
+        new A(this,
+                Bootstrap5CssClass.BTN_PRIMARY.getAttribute(),
+                new Href(sampleFilesUploadWithoutActionUrlUri),
+                new OnClick("""
+                        event.preventDefault();
+                        loadingIcon.hidden = false;
+                        return true;""", event -> {
+                    documentModel.browserPage().setURI(sampleFilesUploadWithoutActionUrlUri);
+                    return null;
+                }, null, "loadingIcon.hidden = true;"))
+                .give(TagContent::text, "Sample files upload without action url");
+
+        new Br(this);
+        new Br(this);
+
         //calling custom Server Method
         new A(this,
                 Bootstrap5CssClass.BTN_PRIMARY.getAttribute(),
@@ -318,6 +335,13 @@ public class UserAccountComponent extends Div {
                     documentModel.browserPage().getTagRepository().findTitleTag().give(
                             TagContent::text, "SampleFilesUploadComponent | User Account | wffweb demo");
                     return new AbstractHtml[]{new SampleFilesUploadComponent(documentModel)};
+                });
+
+        widgetDiv.whenURI(NavigationURI.SAMPLE_FILES_UPLOAD_WITHOUT_ACTION_URL_COMPONENT.getPredicate(documentModel, widgetDiv),
+                () -> {
+                    documentModel.browserPage().getTagRepository().findTitleTag().give(
+                            TagContent::text, "SampleFilesUploadWithoutActionUrlComponent | User Account | wffweb demo");
+                    return new AbstractHtml[]{new SampleFilesUploadWithoutActionUrlComponent()};
                 });
 
 
