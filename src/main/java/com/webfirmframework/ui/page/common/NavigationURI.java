@@ -30,6 +30,8 @@ public enum NavigationURI {
 
     SAMPLE_FILES_UPLOAD("/ui/user/samplefilesupload", false, false, true),
 
+    SAMPLE_FILES_UPLOAD_WITHOUT_ACTION_URL_COMPONENT("/ui/user/samplefilesuploadwithoutactionurl", false, false, true),
+
     REALTIME_SERVER_LOG("/ui/realtime-server-log", false, false, true);
 
     private final String uri;
