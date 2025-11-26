@@ -16,8 +16,12 @@ public class IndexPage extends BrowserPage {
 
     private static final Logger LOGGER = Logger.getLogger(IndexPage.class.getName());
 
-    // this is a standard interval
-    public static final int HEARTBEAT_TIME_MILLISECONDS = 25000;
+    // TODO this value is good for good internet speed, increase its value if you have poor internet.
+    public static final int HEARTBEAT_INTERVAL_MILLISECONDS = 10_000;
+
+    // TODO this value is good for good internet speed, increase its value if you have poor internet.
+    // Note: Make sure that your UI code doesn't block the UI update for more than 2000 milliseconds.
+    public static final int HEARTBEAT_TIMEOUT_MILLISECONDS = 2_000;
 
     private static final int WS_RECONNECT_TIME = 1000;
 
@@ -43,7 +47,8 @@ public class IndexPage extends BrowserPage {
         // Write BrowserPage configurations code here.
         // The following code can also be written inside render() method but
         // writing here will be a nice separation of concern.
-        super.setWebSocketHeartbeatInterval(HEARTBEAT_TIME_MILLISECONDS);
+        super.setWebSocketHeartbeatInterval(HEARTBEAT_INTERVAL_MILLISECONDS);
+        super.setWebSocketHeartbeatInterval(HEARTBEAT_TIMEOUT_MILLISECONDS);
         super.setWebSocketReconnectInterval(WS_RECONNECT_TIME);
         super.setExecutor(AppSettings.CACHED_THREAD_POOL);
     }
